@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "uwb_tag"
+		},
+		{
+			"path": "uwb_anchor"
+		}
+	],
+	"settings": {}
+}
