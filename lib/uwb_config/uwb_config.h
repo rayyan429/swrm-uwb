@@ -2,7 +2,13 @@
 // Change things here, not in the individual main.cpp files.
 #pragma once
 
-// ---- Pins: Makerfabs ESP32 UWB (DWM1000) ----
+// ---- Pins: ESP32 wired to an Ai-Thinker BU03 (DW3000) ----
+// The BU03 is a bare SMD module, so these depend on your carrier board / wiring.
+// SCK/MISO/MOSI are the ESP32's default VSPI pins.
+// TODO(milestone 0): set CS, RST and IRQ to match your wiring. These are
+// placeholders left over from the DWM1000 board.
+// BU03 notes: RSTN must never be driven high (drive low or leave floating),
+// and tie WAKEUP to GND if you don't use it.
 // A custom PCB that keeps these pins can run the same firmware unchanged.
 #define PIN_SPI_SCK   18
 #define PIN_SPI_MISO  19
@@ -19,10 +25,10 @@
 #define ANCHOR_ADDR_BASE 0x80
 
 // ---- Calibration ----
-// Antenna delay in DW1000 time units (~15.65 ps each, so 1 unit ~ 4.7 mm of range).
-// 16384 is the uncalibrated default and reads long by tens of cm.
-// TODO(milestone 3): replace with your measured value (typically ~16500-16600).
-#define ANTENNA_DELAY 16384
+// Antenna delay in DW3000 time units (~15.65 ps each, so 1 unit ~ 4.7 mm of range).
+// 16385 is Qorvo's uncalibrated example default; expect it to read off by tens of cm.
+// TODO(milestone 3): replace with your measured value.
+#define ANTENNA_DELAY 16385
 
 // ---- Field geometry ----
 // Anchor (x, y) positions in metres, measured from your chosen origin corner.

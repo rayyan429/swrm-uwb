@@ -2,13 +2,21 @@
 
 Work through these in order. Each milestone has a pass check, so if something breaks you know which layer it's in. See [FILE_LAYOUT.md](FILE_LAYOUT.md) for where everything lives.
 
-**Unplug and replug the board after uploading.** The DW1000 sometimes doesn't reset cleanly otherwise.
+**Unplug and replug the board after uploading.** UWB chips sometimes don't reset cleanly otherwise.
+
+## 0. Port to the DW3000 (BU03)
+The UWB module is the Ai-Thinker BU03 ([LCSC C42419011](https://www.lcsc.com/product-detail/C42419011.html)), a DW3000-series chip on direct SPI (no onboard MCU, channels 5 and 9). The firmware was first written for the DW1000, which is a different chip, so:
+- [ ] Choose the ESP32 board and how the BU03 connects to it (carrier board or breakout). Set `PIN_DW_CS`, `PIN_DW_RST` and `PIN_DW_IRQ` in `uwb_config.h`.
+- [ ] Replace `lib/DW1000` with a DW3000 driver and port both `main.cpp` files (two-way ranging between the tag and each anchor).
+- [ ] Use BU03s on every board. The DW3000 can't range with a DW1000.
+
+**Pass:** both projects build with `pio run`.
 
 ## 1. Smoke test
 - [ ] `cd uwb_anchor` then `pio run -e anchor1 -t upload` then `pio device monitor`
 - [ ] Do the same for `uwb_tag` on the second board.
 
-**Pass:** both print `Device ID: DECA0130`. If you see `00000000` or `FFFFFFFF`, the SPI link is wrong (check the pins in `lib/uwb_config/uwb_config.h`).
+**Pass:** both print the DW3000 device ID (`DECA0302` for a DW3110, `DECA0312` for a DW3120). If you see `00000000` or `FFFFFFFF`, the SPI link is wrong (check the pins in `lib/uwb_config/uwb_config.h`).
 
 ## 2. Two-board ranging
 - [ ] One anchor and the tag powered. The tag prints `anchor 81: x.xx m`.
