@@ -25,9 +25,16 @@ def parse_line(line):
     The tag also prints debug text ("anchor found: ...") so most lines won't
     be CSV; those must return None rather than crash.
     """
-    # TODO: split on commas, expect 2 + len(ANCHORS) values, convert to float
+    # (Sofia) TODO: split on commas, expect 2 + len(ANCHORS) values, convert to float
     # (catch ValueError), and return (x, y, distances).
-    return None
+    parts = line.split(",")
+    if len(parts) != 2 + len(ANCHORS):
+        return None;
+    try:
+        values = [float(p) for p in parts]
+    except ValueError:
+        return None
+    return values[0], values[1], values[2:]
 
 
 def main():
@@ -48,7 +55,10 @@ def main():
     ax.legend()
 
     trail = []
-    # TODO: create the artists once here, e.g.
+    trail_line, = ax.plot([], [], "-", alpha = 0.4)
+    tag_dot, = ax.plot([], [], "o", markersize = 10, label ="tag")
+    ax.legend()
+    # (Sofia) TODO: create the artists once here, e.g.
     #   trail_line, = ax.plot([], [], "-", alpha=0.4)
     #   tag_dot, = ax.plot([], [], "o", markersize=10)
 
@@ -59,6 +69,18 @@ def main():
             x, y, dists = parsed
             # TODO: append (x, y) to trail, keep only the last TRAIL_LEN
             # points, then update the artists with set_data().
+            x, y, dists = parsed
+            trail.append((x.y))
+            del trail[:-TRAIL_LEN]
+
+            xs, ys = zip(*trail)
+            trail_line.set_data(xs, ys)
+            tag_dot.set_data([x], [y])
+
+            all_x = list(xs) + [a[0] for a in ANCHORS]
+            all_y = list(ys) + [a[1] for a in ANCHORS]
+            ax.set_xlim(min(all_x) -1, max(all_x) +1)
+            ax.set_y02lim(min(all_y) -1, max(all_y) +1)
         plt.pause(0.001)
 
     ser.close()
