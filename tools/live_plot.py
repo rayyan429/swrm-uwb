@@ -80,7 +80,7 @@ def main():
             all_x = list(xs) + [a[0] for a in ANCHORS]
             all_y = list(ys) + [a[1] for a in ANCHORS]
             ax.set_xlim(min(all_x) -1, max(all_x) +1)
-            ax.set_y1lim(min(all_y) -1, max(all_y) +1)
+            ax.set_ylim(min(all_y) -1, max(all_y) +1)
         plt.pause(0.001)
 
     ser.close()
