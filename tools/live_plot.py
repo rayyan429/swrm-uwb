@@ -67,10 +67,10 @@ def main():
         parsed = parse_line(raw)
         if parsed is not None:
             x, y, dists = parsed
-            # TODO: append (x, y) to trail, keep only the last TRAIL_LEN
+            # (Sofia) TODO: append (x, y) to trail, keep only the last TRAIL_LEN
             # points, then update the artists with set_data().
             x, y, dists = parsed
-            trail.append((x.y))
+            trail.append((x,y))
             del trail[:-TRAIL_LEN]
 
             xs, ys = zip(*trail)
@@ -80,7 +80,7 @@ def main():
             all_x = list(xs) + [a[0] for a in ANCHORS]
             all_y = list(ys) + [a[1] for a in ANCHORS]
             ax.set_xlim(min(all_x) -1, max(all_x) +1)
-            ax.set_y02lim(min(all_y) -1, max(all_y) +1)
+            ax.set_y1lim(min(all_y) -1, max(all_y) +1)
         plt.pause(0.001)
 
     ser.close()
