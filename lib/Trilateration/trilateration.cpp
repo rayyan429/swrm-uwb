@@ -1,4 +1,5 @@
 #include "trilateration.h"
+#include <cmath>
 
 // The math
 // --------
@@ -19,7 +20,7 @@
 // mean no point satisfies all of them. Least squares picks the p that
 // minimizes the total squared error by solving the "normal equations":
 //
-//     (A^T A) p = A^T b
+//     (A^T A) p = A^T b, p are the unknown xy pairs 
 //
 // A^T A is just 2x2, so you can solve it directly:
 //
@@ -39,15 +40,30 @@ bool trilaterate2D(const float anchors[][2], const float dists[], int n, Point2D
     if (n < 3) {
         return false;
     }
+    const float x0 = anchors[0][0], y0 = anchors[0][1], d0 = dists[0];
+    float Sxx = 0, Sxy = 0, Syy = 0, Sxb = 0, Syb = 0;
 
-    // TODO(milestone 5): loop i = 1 .. n-1, build a_i1, a_i2 and b_i from the
-    // comments above, and accumulate Sxx, Sxy, Syy, Sxb, Syb.
+    for (int i = 1; i < n; i++) {
+        const float xi = anchors[i][0], yi = anchors[i][1], di = dists[i];
+        const float a_i1 = 2 * (xi - x0);
+        const float a_i2 = 2 * (yi - y0);
+        const float b_i = d0 * d0 - di * di + xi * xi - x0 * x0 + yi * yi - y0 * y0;
 
-    // TODO(milestone 5): compute det. If its absolute value is tiny (try 1e-6),
-    // return false. Otherwise solve for x and y, write them to out, return true.
+        Sxx += a_i1 * a_i1;
+        Sxy += a_i1 * a_i2;
+        Syy += a_i2 * a_i2;
+        Sxb += a_i1 * b_i;
+        Syb += a_i2 * b_i;
+    }
 
-    (void)anchors;
-    (void)dists;
-    (void)out;
-    return false;
+    const float det = Sxx * Syy - Sxy * Sxy;
+    if (fabsf(det) < 1e-6f) {
+        return false;
+    }
+
+    const float x = (Syy * Sxb - Sxy * Syb) / det;
+    const float y = (Sxx * Syb - Sxy * Sxb) / det;
+    out.x = x;
+    out.y = y;
+    return true;
 }
