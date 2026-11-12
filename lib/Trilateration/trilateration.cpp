@@ -27,7 +27,7 @@
 //     A^T A = | Sxx  Sxy |      A^T b = | Sxb |
 //             | Sxy  Syy |              | Syb |
 //
-//     where Sxx = sum(a_i1^2), Sxy = sum(a_i1 * a_i2), Syy = sum(a_i2^2),
+//     where Sxx = sum(a_i1^2), Sxy = sum(a_i1 * a_i2), Syy = sum(a_i2^2), THESE ARE THE SUMS OF ANCHORS
 //           Sxb = sum(a_i1 * b_i), Syb = sum(a_i2 * b_i)
 //
 //     det = Sxx * Syy - Sxy^2
