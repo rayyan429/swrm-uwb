@@ -2,7 +2,7 @@
 
 Planned structure for the SWRM UWB positioning system: ESP32 + Ai-Thinker BU03 (DW3000 chip), 4 anchors, 1 tag, PlatformIO.
 
-The firmware was first written for the DW1000, and `lib/DW1000` is still in place until the DW3000 port (milestone 0 in [ROADMAP.md](ROADMAP.md)).
+The DW3000 driver isn't in the repo: PlatformIO downloads it at build time (`lib_deps` in both `platformio.ini` files, pinned to one commit).
 
 - **C++ (ESP32, PlatformIO):** ranging firmware and trilateration. The tag solves its own position.
 - **Python (PC):** reads the tag's serial output for live plotting and accuracy logging.
@@ -18,7 +18,7 @@ flowchart TD
   root --> tools["tools/"]
   root --> docs["docs/"]
 
-  lib --> dw["DW1000/<br/>ranging library<br/>TODO: replace with DW3000 driver"]:::existing
+  lib --> dw["uwb_ranging/<br/>DW3000 setup + two-way ranging<br/>(driver fetched via lib_deps)"]:::new
   lib --> cfg["uwb_config/uwb_config.h<br/>pins, anchor IDs,<br/>anchor (x,y) positions, antenna delay"]:::new
   lib --> tri["Trilateration/"]
   tri --> trih["trilateration.h<br/>function signatures + docs"]:::new
@@ -75,7 +75,7 @@ The BU03 talks to the ESP32 over SPI (CSN, MOSI, MISO, CLK, plus IRQ, RSTN and W
 
 ## Milestones
 
-0. **DW3000 port:** pick the ESP32 board and wiring, swap the DW1000 library for a DW3000 driver.
+0. **DW3000 port:** wire each BU03 to an ESP32, range with the DW3000 driver (`lib/uwb_ranging`).
 1. **Smoke test:** read the DW3000 device ID (`DECA0302` or `DECA0312`) over SPI.
 2. **Two-board ranging:** check against a tape measure at 1, 2 and 5 m.
 3. **Antenna delay calibration:** error of about 10 cm or less at a known distance.
