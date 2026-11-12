@@ -3,10 +3,12 @@
 #pragma once
 
 // ---- Pins: ESP32 wired to an Ai-Thinker BU03 (DW3000) ----
-// The BU03 is a bare SMD module, so these depend on your carrier board / wiring.
-// SCK/MISO/MOSI are the ESP32's default VSPI pins.
-// TODO(milestone 0): set CS, RST and IRQ to match your wiring. These are
-// placeholders left over from the DWM1000 board.
+// The BU03 is a bare SMD module, so these depend on your wiring. These are the
+// recommended pins (BU03 pin number in brackets):
+//   CLK(20)->18  MISO(19)->19  MOSI(18)->23  CSN(17)->4  RSTN(3)->27  IRQ(22)->34
+//   VDD(5), VCC(6,7)->3V3   GND(8,16,24)->GND   WAKEUP(2)->GND
+// SCK/MISO/MOSI are the ESP32's default VSPI pins. If a board is wired
+// differently, change the numbers here.
 // BU03 notes: RSTN must never be driven high (drive low or leave floating),
 // and tie WAKEUP to GND if you don't use it.
 // A custom PCB that keeps these pins can run the same firmware unchanged.

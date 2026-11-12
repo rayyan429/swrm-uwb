@@ -7,10 +7,10 @@ Work through these in order. Each milestone has a pass check, so if something br
 ## Status (2026-11-11)
 | | |
 |---|---|
-| **Done** | Trilateration solver + unit tests, live plot + `--demo` mode, hardware in the lab, BU03s soldered |
-| **Now** | Record the pin wiring, then the SPI smoke test (milestone 1) |
-| **In parallel** | DW3000 port (milestone 0), tag logic (milestone 5) |
-| **Blocked on the port** | Two-board ranging and everything after it |
+| **Done** | Trilateration solver + unit tests, live plot + `--demo` mode, hardware in the lab, BU03s soldered, DW3000 firmware port (builds; not yet run on hardware) |
+| **Now** | Confirm the pin wiring, then the smoke test (milestone 1) |
+| **In parallel** | Tag logic (milestones 4–5), switch the repo to 3 anchors |
+| **Next on hardware** | Two-board ranging (milestone 2) |
 
 **Unplug and replug the board after uploading.** UWB chips sometimes don't reset cleanly otherwise.
 
@@ -18,17 +18,17 @@ Work through these in order. Each milestone has a pass check, so if something br
 Hardware (in the lab: 7 BU03, 6 ESP32, 4 × 3.7 V Li batteries):
 - [x] Choose and order the ESP32 boards and BU03 modules.
 - [x] Solder the BU03s to the ESP32s.
-- [ ] Record the wiring: set `PIN_DW_CS`, `PIN_DW_RST` and `PIN_DW_IRQ` (and the SPI pins if they differ) in `lib/uwb_config/uwb_config.h`.
+- [ ] Confirm the wiring matches `lib/uwb_config/uwb_config.h` (recommended: CLK 18, MISO 19, MOSI 23, CSN 4, RSTN 27, IRQ 34, WAKEUP to GND). If a board differs, change the pins there.
 
 Power: the BU03 takes 2.5–3.6 V. Feed it from the ESP32 board's **3V3 pin**. Never connect a 3.7 V Li cell (4.2 V when full) directly to the BU03 or to the ESP32's 3V3 pin. RSTN must never be driven high.
 
 Firmware:
-- [ ] Replace the DW1000 library with a real DW3000 driver and port both `main.cpp` files (two-way ranging between the tag and each anchor). Note: `lib/DW3000/` is currently the old DW1000 library renamed, with no code changes, so it won't talk to the DW3000 yet.
+- [x] Replace the DW1000 library with a DW3000 driver and port both `main.cpp` files. The driver (Qorvo API, Makerfabs Arduino port) is fetched by PlatformIO via `lib_deps`; the ranging code is in `lib/uwb_ranging`. The tag polls each anchor by address in turn (single-sided two-way ranging) and only that anchor replies.
 
-**Pass:** both projects build with `pio run`.
+**Pass:** both projects build with `pio run`. ✅
 
 ## 1. Smoke test (next)
-- [ ] Flash a minimal sketch that reads the DW3000 device ID over SPI. This checks the wiring without needing the full port.
+- [ ] Plug one board into USB. `cd uwb_anchor` then `pio run -e anchor1 -t upload` then `pio device monitor`. The firmware prints the device ID at start-up.
 - [ ] Repeat on all 4 boards.
 
 **Pass:** every board prints the DW3000 device ID (`DECA0302` for a DW3110, `DECA0312` for a DW3120). If you see `00000000` or `FFFFFFFF`, the SPI link is wrong: check the pins in `uwb_config.h`, the 3V3/GND wiring and the solder joints.
