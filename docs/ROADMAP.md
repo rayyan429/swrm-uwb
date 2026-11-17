@@ -4,20 +4,22 @@ Work through these in order. Each milestone has a pass check, so if something br
 
 **Setup:** 3 anchors + 1 tag. Each is an ESP32 with an Ai-Thinker BU03 UWB module ([LCSC C42419011](https://www.lcsc.com/product-detail/C42419011.html)): a DW3000-series chip on direct SPI (no onboard MCU, channels 5 and 9).
 
-## Status (2026-11-11)
+## Status (2026-11-17)
 | | |
 |---|---|
-| **Done** | Trilateration solver + unit tests, live plot + `--demo` mode, hardware in the lab, BU03s soldered, DW3000 firmware port (builds; not yet run on hardware) |
-| **Now** | Confirm the pin wiring, then the smoke test (milestone 1) |
-| **In parallel** | Tag logic (milestones 4–5), switch the repo to 3 anchors |
-| **Next on hardware** | Two-board ranging (milestone 2) |
+| **Done** | Trilateration solver + unit tests, live plot + `--demo` mode, hardware in the lab, DW3000 firmware port (builds; not yet run on hardware) |
+| **Waiting on** | Soldering the BU03s to the ESP32s |
+| **Coding now (no hardware)** | Tag logic (Rayyan), 3-anchor switch + anchor addresses, calibration + accuracy tools. Task guides are in [guides/](guides/). |
+| **Next on hardware** | Smoke test (milestone 1), then two-board ranging (milestone 2) |
+
+New to the project? Start with [guides/SETUP.md](guides/SETUP.md).
 
 **Unplug and replug the board after uploading.** UWB chips sometimes don't reset cleanly otherwise.
 
 ## 0. Hardware and DW3000 port
 Hardware (in the lab: 7 BU03, 6 ESP32, 4 × 3.7 V Li batteries):
 - [x] Choose and order the ESP32 boards and BU03 modules.
-- [x] Solder the BU03s to the ESP32s.
+- [ ] Solder the BU03s to the ESP32s (waiting on solder).
 - [ ] Confirm the wiring matches `lib/uwb_config/uwb_config.h` (recommended: CLK 18, MISO 19, MOSI 23, CSN 4, RSTN 27, IRQ 34, WAKEUP to GND). If a board differs, change the pins there.
 
 Power: the BU03 takes 2.5–3.6 V. Feed it from the ESP32 board's **3V3 pin**. Never connect a 3.7 V Li cell (4.2 V when full) directly to the BU03 or to the ESP32's 3V3 pin. RSTN must never be driven high.
@@ -41,7 +43,7 @@ Firmware:
 
 ## 3. Antenna delay calibration
 - [ ] Hold the tag at a known distance (e.g. 2.00 m).
-- [ ] Adjust `ANTENNA_DELAY` in `uwb_config.h`. Raising it shortens the reading (about 4.7 mm per unit). Re-flash both boards each time.
+- [ ] Adjust `ANTENNA_DELAY` in `uwb_config.h`. Raising it by 1 shortens the reading by about 9.4 mm (it's applied as the TX and RX delay on both boards, which adds up to 2 time units of 4.69 mm each). Re-flash both boards each time.
 
 **Pass:** the error is about 10 cm or less at 1, 2 and 5 m.
 
