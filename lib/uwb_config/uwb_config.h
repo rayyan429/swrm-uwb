@@ -27,7 +27,9 @@
 #define ANCHOR_ADDR_BASE 0x80
 
 // ---- Calibration ----
-// Antenna delay in DW3000 time units (~15.65 ps each, so 1 unit ~ 4.7 mm of range).
+// Antenna delay in DW3000 time units (~15.65 ps each). It is used as both the
+// TX and RX delay on every board, so raising it by 1 shortens the measured
+// distance by ~9.4 mm (2 units x 4.69 mm).
 // 16385 is Qorvo's uncalibrated example default; expect it to read off by tens of cm.
 // TODO(milestone 3): replace with your measured value.
 #define ANTENNA_DELAY 16385
