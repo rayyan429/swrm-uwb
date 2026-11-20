@@ -67,12 +67,10 @@ Work through this checklist. Each item says what to change and why.
 ### 2. `uwb_anchor/platformio.ini`
 - [ ] Delete the whole `[env:anchor4]` section (2 lines).
 
-### 3. `tools/live_plot.py`
-- [ ] `ANCHORS`: 3 entries instead of 4 (all `(0.0, 0.0)` for now, same as `ANCHOR_POS`).
-- [ ] `DEMO_ANCHORS`: change the 4 corners to a 3-anchor triangle, e.g. `[(0.0, 0.0), (5.0, 0.0), (2.5, 4.0)]`, and update the comment above it.
-- [ ] The docstring at the top says `"x,y,d1,d2,d3,d4"` → `"x,y,d1,d2,d3"`. Same in `parse_line()`'s docstring: `[d1..d4]` → `[d1..d3]`.
+### 3. `tools/live_plot.py`: already done ✅
+The plot already uses 3 anchors: a triangle in the demo, and 3 entries in `ANCHORS`. Nothing to change here. Just know about this when you test:
 
-⚠️ **The trap:** `parse_line()` only accepts lines with exactly `2 + len(ANCHORS)` numbers. The demo's fake tag makes one distance per entry in `DEMO_ANCHORS`. **`ANCHORS` and `DEMO_ANCHORS` must have the same length**, or the demo silently draws nothing: every line gets rejected, with no error.
+⚠️ `parse_line()` only accepts lines with exactly `2 + len(ANCHORS)` numbers, and the demo's fake tag makes one distance per entry in `DEMO_ANCHORS`. **`ANCHORS` and `DEMO_ANCHORS` must have the same length**, or the plot silently draws nothing. Likewise, the real tag must send one distance per anchor, which it will once `NUM_ANCHORS` is 3.
 
 ### 4. Docs
 - [ ] `docs/FILE_LAYOUT.md`: "4 anchors" → "3 anchors", "anchor1 to anchor4" → "anchor1 to anchor3", `d1..d4` → `d1..d3`, `x,y,d1,d2,d3,d4` → `x,y,d1,d2,d3`. In the data-flow diagram, delete the `A4["Anchor 4"]` and `A4 --> R` lines.
@@ -92,18 +90,11 @@ Work through this checklist. Each item says what to change and why.
    ```
    All `SUCCESS`. If `pio run` in `uwb_anchor` still lists `anchor4`, the ini section isn't fully deleted.
 2. **Tests still pass** (needs gcc, see SETUP.md): `pio test -e native` gives `4 test cases: 4 succeeded`.
-3. **The demo works:** from the repo root:
-   ```
-   python tools/live_plot.py --demo
-   ```
-   You should see **3 triangles** and the moving tag dot with its trail. If the anchors appear but the dot never moves, that's the trap above: check the two lists have the same length.
-4. **Nothing still says 4 anchors:** search the repo (Ctrl+Shift+F in VS Code) for `anchor4`, `0x84`, `d4` and `NUM_ANCHORS 4`. The only hits should be in `uwb_tag/src/main.cpp`, which is Rayyan's.
-
-Notice in the demo that the fake tag's loop goes outside the triangle near the top. That's a preview of a real effect: positions are most accurate **inside** the triangle the anchors make.
+3. **Nothing still says 4 anchors:** search the repo (Ctrl+Shift+F in VS Code) for `anchor4`, `0x84`, `d4` and `NUM_ANCHORS 4`. The only hits should be in `uwb_tag/src/main.cpp`, which is Rayyan's.
 
 ### Commit and open the PR
 ```
-git add lib/uwb_config/uwb_config.h uwb_anchor/platformio.ini tools/live_plot.py docs/FILE_LAYOUT.md docs/ROADMAP.md
+git add lib/uwb_config/uwb_config.h uwb_anchor/platformio.ini docs/FILE_LAYOUT.md docs/ROADMAP.md
 git commit -m "Switch to 3 anchors"
 git push -u origin three-anchors
 gh pr create --fill
@@ -115,5 +106,5 @@ Ask Rayyan to review it. **Try to get this merged early**: Rayyan's tag work dep
 |---|---|
 | `#error "Build with an anchor env"` | You ran `pio run` without `-e anchorN`, or `ANCHOR_ID` isn't in `build_flags`. |
 | `too many initializers for 'const float [3][2]'` | `ANCHOR_POS` still has 4 rows but `NUM_ANCHORS` is 3. |
-| Demo shows anchors but no moving dot | `ANCHORS` and `DEMO_ANCHORS` have different lengths. |
+| Plot shows anchors but no moving dot | `ANCHORS` and `DEMO_ANCHORS` have different lengths, or the tag sends a different number of distances. |
 | `Not a PlatformIO project` | Run `pio` from inside `uwb_anchor/` or `uwb_tag/`. |
