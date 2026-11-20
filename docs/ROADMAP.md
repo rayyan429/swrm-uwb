@@ -48,7 +48,8 @@ Firmware:
 **Pass:** the error is about 10 cm or less at 1, 2 and 5 m.
 
 ## 4. Three anchors
-- [ ] Switch the repo to 3 anchors: `NUM_ANCHORS 3` and 3 rows of `ANCHOR_POS` in `uwb_config.h`, drop `[env:anchor4]` from `uwb_anchor/platformio.ini`, 3 `ANCHORS` in `tools/live_plot.py` (and a 3-anchor demo field).
+- [x] Live plot uses 3 anchors (3 `ANCHORS`, triangle demo field).
+- [ ] Switch the firmware to 3 anchors: `NUM_ANCHORS 3` and 3 rows of `ANCHOR_POS` in `uwb_config.h`, drop `[env:anchor4]` from `uwb_anchor/platformio.ini`.
 - [ ] Fill in the anchor address TODO in `uwb_anchor/src/main.cpp`, then flash `anchor1` to `anchor3`.
 - [ ] Place the anchors in a wide triangle around the field, all at the same height (never in a straight line). Measure their (x, y) and fill in `ANCHOR_POS` and the `ANCHORS` list in `live_plot.py`.
 - [ ] Fill in the `newRange()` TODO in the tag so it stores a range per anchor.
@@ -67,7 +68,8 @@ With only 3 anchors there is no spare: if one is blocked, the tag gets no positi
 
 ## 6. Live plot + accuracy test
 - [x] `pip install -r tools/requirements.txt` and fill in the `live_plot.py` TODOs.
-- [x] `python tools/live_plot.py --demo` runs with a fake tag (no board needed).
+- [x] `python tools/live_plot.py --demo` runs with a fake tag (no board needed). The fake tag measures noisy distances and solves them with the same math as `trilateration.cpp`.
+- [x] Plot shows a distance circle around each anchor and a live panel with the trilateration math (distances → line equations → position).
 - [ ] Run against the real tag: `python tools/live_plot.py --port COMx`.
 - [ ] Put the tag on marked spots and log reported vs. true position.
 - [ ] Repeat with a person standing between the tag and one anchor.

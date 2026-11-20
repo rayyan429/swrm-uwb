@@ -1,10 +1,10 @@
 # Guide: calibration and accuracy tools
 
-**Tasks:** J (tidy `live_plot.py`), G (calibration helper) and H (accuracy logger).
+**Tasks:** G (calibration helper) and H (accuracy logger). (Task J, tidying `live_plot.py`, is already done.)
 **Hardware needed:** none. You'll test with fake data, and the tools get used for real once the boards work.
 **Language:** Python.
 **Time:** about 3–4 hours in total.
-**Branch names:** `plot-cleanup`, then `calibration-tools`
+**Branch name:** `calibration-tools`
 
 Do [SETUP.md](SETUP.md) first if you haven't, including `pip install -r tools/requirements.txt`.
 
@@ -32,18 +32,12 @@ line = ser.readline().decode(errors="ignore").strip()   # "" if nothing arrived 
 
 ---
 
-## Part 1: tidy `live_plot.py` (task J, warm-up, about 15 min)
-Branch: `plot-cleanup`. In `tools/live_plot.py`:
-- [ ] Delete the three leftover `# (Sofia) TODO ...` comments, including the comment lines that continue each one. The code they describe is written underneath them now.
-- [ ] Delete the duplicate `x, y, dists = parsed`. It appears twice in a row in the main loop.
-- [ ] Remove the `;` after `return None` in `parse_line()`. Python doesn't need it.
-- [ ] Optional: `alpha = 0.4` → `alpha=0.4` and `label ="tag"` → `label="tag"`. Python style puts no spaces around `=` in function arguments.
-
-Check that `python tools/live_plot.py --demo` still runs, then commit, push, open the PR, merge, and `git checkout main && git pull` before starting Part 2.
+## Before you start: look at the live plot
+Run `python tools/live_plot.py --demo` and read through `tools/live_plot.py`. Every section has a comment explaining it, and your tools follow the same pattern: read lines, parse them, use the numbers. The demo draws a circle around each anchor with radius = the measured distance (the tag is where they cross), and the panel on the right shows the trilateration math live.
 
 ---
 
-## Part 2: calibration helper, `tools/calibrate.py` (task G)
+## Part 1: calibration helper, `tools/calibrate.py` (task G)
 Branch: `calibration-tools`.
 
 ### What it does
@@ -108,7 +102,7 @@ Commit: `git add tools/calibrate.py tools/samples/calib_sample.txt` and `git com
 
 ---
 
-## Part 3: accuracy logger, `tools/log_accuracy.py` (task H)
+## Part 2: accuracy logger, `tools/log_accuracy.py` (task H)
 Same branch, `calibration-tools`.
 
 ### What it does
@@ -161,7 +155,7 @@ class StillTag:
 ```
 In `--demo` mode, set `tag.x, tag.y` to the true position the user types, so the fake tag is "placed" on that spot. Expected results: the **error is 1 cm or less** (averaging 50 noisy samples cancels most of the noise) and the **jitter is around 0.06 m**. Try a fake with a fixed offset (e.g. `self.x + 0.2`) and check that the error comes out at about 0.2 m.
 
-`f"{x:.3f},{y:.3f},1.0,2.0,3.0"` has 3 distances, which matches the 3-anchor setup. Until the 3-anchor change (the other guide) is merged, `parse_line()` still expects 4 distances and will reject these lines. If you start before that's merged, temporarily add a fourth `,4.0`.
+`f"{x:.3f},{y:.3f},1.0,2.0,3.0"` has 3 distances, which matches the 3 anchors `parse_line()` expects.
 
 ### Commit and open the PR
 ```
