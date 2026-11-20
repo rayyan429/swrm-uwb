@@ -39,6 +39,7 @@ DEMO_NOISE = 0.05
 # Turns distances into a position. A Python copy of trilaterate2D() in
 # lib/Trilateration/trilateration.cpp, step for step, so the demo and the math
 # panel use the same method as the tag.
+
 def trilaterate(anchors, dists):
     """Return (x, y, rows) or None if there is no unique answer (fewer than 3
     anchors, or anchors in a line). rows holds each linear equation as
@@ -46,12 +47,15 @@ def trilaterate(anchors, dists):
     if len(anchors) < 3:
         return None
 
-    # Anchor 1 is the reference: its circle gets subtracted from every other
-    # anchor's circle, which cancels the x^2 and y^2 terms and leaves one
-    # straight-line equation per remaining anchor.
-    (x0, y0), d0 = anchors[0], dists[0]
+    # first anchor is the referemce subtract anchor i from it
+    # N anchors give N - 1 eqs, need to 2 equations so 3 anchors minimum
+
+    (x0, y0), d0 = anchors[0], dists[0]     # anchors is a tuple of (x, y), dists is matching list of distances from tag to anchors i 
     rows = []
-    sxx = sxy = syy = sxb = syb = 0.0
+    sxx = sxy = syy = sxb = syb = 0.0       #running simes. x = a1, y = a2, b = b
+
+    # a1*x + a2*y = b (multiple eqs of this) are the lines between the circles of the anchors. The intersection of these lines is the position of the tag.
+
     for (xi, yi), di in zip(anchors[1:], dists[1:]):
         a1 = 2 * (xi - x0)
         a2 = 2 * (yi - y0)
