@@ -174,7 +174,7 @@ def main():
     fig, (ax, ax_math) = plt.subplots(1, 2, figsize=(11, 5.5),
                                       gridspec_kw={"width_ratios": [3, 2]})
     if args.demo:
-        fig.suptitle("SIMULATED: fake distances with ~5 cm noise, no hardware")
+        fig.suptitle("SIMULATED UWB trilateration")
 
     # ---- Things drawn once ----
     # Anchors as labelled triangles.
